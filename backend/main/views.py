@@ -30,6 +30,9 @@ from django.urls import reverse
 import uuid
 import json
 from django.conf import settings
+import logging
+logger = logging.getLogger(__name__)
+logging.basicConfig("logs.txt")
 
 
 class TagByName(views.APIView):
@@ -191,7 +194,7 @@ class CommentView(viewsets.ModelViewSet):
             article = data.data['article']
             article = models.Article.objects.get(_id=article)
             user = request.user
-            cmnt = models.Comment.objects.create(desc=desc,article=article,user=user,is_author=user==True if user == article.user else False)
+            cmnt = models.Comment.objects.create(desc=desc,article=article,user=user,is_author=user == article.user)
             cmnt.save()
             comments_of_article = list(article.article_comments.all().values())
             return JsonResponse(comments_of_article,safe=False)
@@ -206,8 +209,10 @@ class LoginView(views.APIView):
     @method_decorator(ensure_csrf_cookie)
     def post(self,request):
         data = serializer.LoginSerializer(data=request.data)
-        print(data.is_valid())
-        print(data.errors)
+        logger.info("View [LoginView](212-214) Start")
+        logger.info(data.is_valid())
+        logger.info(data.errors)
+        logger.info("View [LoginView](212-214) End")
         if data.is_valid():
             email = data.data['email']
             password = data.data['password']

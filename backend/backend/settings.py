@@ -13,7 +13,9 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import os
 from corsheaders.defaults import default_headers
+from dotenv import load_dotenv
 
+load_dotenv()
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'X-CSRFTOKEN',
 ]
@@ -28,9 +30,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 DEV_MODE = False
 
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.getenv('ENV') == 'DEV' else False
 if DEV_MODE:
     SECURE_SSL_REDIRECT = False
     CSRF_COOKIE_SECURE = False
@@ -74,7 +76,7 @@ CSRF_COOKIE_DOMAIN = '.globeofarticles.com'
 EMAIL_HOST = 'smtp-mail.outlook.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'artclcontctme@outlook.com'
-EMAIL_HOST_PASSWORD = os.environ['password']
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
@@ -141,15 +143,15 @@ DATABASES = {
 
         'ENGINE': 'django.db.backends.postgresql',
 
-        'NAME': "mydb",
+        'NAME': os.getenv('DB_NAME'),
 
-        'USER':"meghazi",
+        'USER':os.getenv('DB_USERNAME') or 'postgres',
 
-        'PASSWORD': os.environ['sql'],
+        'PASSWORD': os.getenv('DB_PASSWORD'),
 
-        'HOST': 'localhost',
+        'HOST': os.getenv('DB_HOST') or 'contentdb',
 
-        'PORT': '5432',
+        'PORT': os.getenv('DB_PORT'),
 
     }
 
@@ -216,11 +218,11 @@ MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
 
 CKEDITOR_UPLOAD_PATH = "/media"
 
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')  
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')  
 
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')  
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')  
 
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME') 
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME') 
 
 AWS_S3_FILE_OVERWRITE = False  
 
@@ -236,7 +238,9 @@ AWS_S3_ADDRESSING_STYLE = "virtual"
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
 }
 
 AUTH_USER_MODEL = 'main.CustomUser'

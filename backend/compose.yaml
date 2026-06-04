@@ -1,0 +1,29 @@
+services:
+  backend:
+    build: .
+    image: contentbackend
+    ports:
+      - "8000:7000"
+
+    depends_on:
+      - contentdb
+  contentdb:
+    image: postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  
+  frontend:
+    build: ../frontend/main
+    image: contentfrontend
+    ports:
+      - "3030:4030"
+    env_file:
+      - ../frontend/main/src/host.env
+    
+  
+volumes:
+ pg_data:
