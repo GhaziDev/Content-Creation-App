@@ -1,38 +1,26 @@
-from django.shortcuts import render
 from main import models,serializer
 from rest_framework import viewsets, views
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.authentication import SessionAuthentication
-from rest_framework import serializers
 from rest_framework.response import Response
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.contrib.auth import login,authenticate,logout
-from django.http import HttpResponse, JsonResponse
+from django.contrib.auth import logout
+from django.http import JsonResponse
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.middleware.csrf import get_token
-from django.utils import timezone, dateformat
-from django.middleware.csrf import CsrfViewMiddleware
-from django.core import serializers
-from django.contrib.postgres.search import SearchVector
-import json
 from rest_framework.parsers import MultiPartParser,FormParser,JSONParser
 from django.contrib.auth.validators import ASCIIUsernameValidator
 from django.core.mail import  send_mail
 from django.utils.crypto import get_random_string
 from django.shortcuts import get_object_or_404
 from django.http import Http404
-from django.urls import reverse
 import uuid
-import json
-from django.conf import settings
 import logging
 logger = logging.getLogger(__name__)
-logging.basicConfig("logs.txt")
+logging.basicConfig(filename="logs.log")
 
 
 class TagByName(views.APIView):
@@ -63,8 +51,6 @@ class ArticleView(viewsets.ModelViewSet):
     
     @method_decorator(ensure_csrf_cookie)
     def create(self,request):
-        authentication_classes = [SessionAuthentication]
-        permissions_classes = [IsAuthenticated]
         article = serializer.ArticleSerializer(data=request.data)
 
         if article.is_valid():
@@ -72,14 +58,13 @@ class ArticleView(viewsets.ModelViewSet):
             title = article.data['title']
             description = article.data['description']
             tag = models.Tag.objects.get(name=article.data['tag'])
-            date = dateformat.format(timezone.now(),settings.DATE_INPUT_FORMATS)
             title_img = request.FILES['title_img']
             if not 20<=len(title)<=60:
                 return Response("Title should be between 20-60 characters!",status=400)
             if not request.user.is_authenticated:
                 return Response("user is not authenticated",status=401)
             user_profile = models.UserProfile.objects.get(user=request.user.username)
-            new_article = models.Article.objects.create(title=title,title_img=title_img,description=description,user=request.user,tag=tag,date=date,user_profile=user_profile)
+            new_article = models.Article.objects.create(title=title,title_img=title_img,description=description,user=request.user,tag=tag,user_profile=user_profile)
             return Response(new_article._id)
         if article.errors.get('title_img'):
            return Response('Upload an image of type : png,jpeg,jpg,ico,gif,webp',status=400)
@@ -183,7 +168,7 @@ class CommentView(viewsets.ModelViewSet):
         if data.is_valid():
             article = data.data['id']
             comments = models.Comment.objects.filter(article=article)
-            return Response(comment,status=200)
+            return Response(comments,status=200)
         return Response('could not validate data',status=400)
 
     @method_decorator(ensure_csrf_cookie)
@@ -292,7 +277,6 @@ class UserProfileView(viewsets.ModelViewSet):
 
     @method_decorator(ensure_csrf_cookie)
     def update(self,request,user): # creating profile
-        permission_classes = [IsAuthenticated,]
         data = serializer.UserProfileSerializer(data=request.data)
         if data.is_valid():
             if not request.FILES.get('img',''):
@@ -329,7 +313,7 @@ class PasswordResetView(views.APIView):
         if data.is_valid():
             try:
                 user = models.CustomUser.objects.get(email=data.data['email'])
-            except:
+            except Exception:
                 return Response("This email does not exist in our database",status=400)
 
             send_mail('Password Reset', f'please reset your password here : https:/www.globeofarticles.com/reset-page/{user.token}',from_email=None, recipient_list=[data.data['email']])
@@ -362,7 +346,7 @@ class PasswordChangeView(views.APIView):
         try:
             get_object_or_404(models.CustomUser,token = token)
             return Response("user is found",status=200)
-        except:
+        except Exception:
             return Response("user is not found",status=404)
     
 

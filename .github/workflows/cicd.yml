@@ -1,0 +1,62 @@
+name: Production CI/CD Pipeline
+
+# Controls when the workflow will run
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows manual triggering from the GitHub UI
+
+jobs:
+  # Continuous Integration (CI) Job
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Fetch source code from repository
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up runtime environment 
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13' 
+        
+
+      # Step 3: Install project dependencies
+      - name: pip install -r requirements.txt
+        run: npm ci
+
+      # Step 4: Run Linters or Format Checkers
+      - name: Run Code Linter
+        run: ruff check
+
+      # Step 5: Execute unit and integration tests
+      - name: Execute Automated Tests
+        run: python manage.py test
+
+
+  # Continuous Deployment (CD) Job
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-test # Blocks deployment if the CI job fails
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' # Limits deployment to merges on main
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # Step 1: Log in to cloud infrastructure or server hosting
+      - name: Authenticate with Production Server
+        run: echo "Connecting to cloud provider..."
+        # Example using third-party actions:
+        # uses: azure/login@v2
+        # with:
+        #   creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Step 2: Deploy your bundle or trigger a release container
+      - name: Deploy Application to Production
+        run: |
+          echo "Deploying built assets to cloud hosting..."
+          # Insert your deployment script or CLI tool execution here

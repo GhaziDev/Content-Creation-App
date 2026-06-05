@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+import sys
 from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
 
@@ -29,15 +30,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 DEV_MODE = False
+TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.getenv('ENV') == 'DEV' else False
-if DEV_MODE:
+if DEV_MODE or TESTING:
     SECURE_SSL_REDIRECT = False
     CSRF_COOKIE_SECURE = False
     SESSION_COOKIE_SECURE = False
-    
+
 else:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
@@ -246,3 +248,7 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'main.CustomUser'
 
 TIME_FORMAT = ['%d.%B.%Y']
+
+if TESTING:
+    EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'

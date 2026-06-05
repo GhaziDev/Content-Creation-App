@@ -1,0 +1,45 @@
+WARNING:django.request:Unauthorized: /isauthenticated/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Not Found: /reset/invalid-token/
+WARNING:django.request:Bad Request: /reset/
+WARNING:django.request:Bad Request: /signup/
+WARNING:django.request:Bad Request: /signup/
+WARNING:django.request:Bad Request: /signup/
+WARNING:django.request:Unauthorized: /isauthenticated/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Not Found: /reset/invalid-token/
+WARNING:django.request:Bad Request: /reset/
+WARNING:django.request:Bad Request: /signup/
+WARNING:django.request:Bad Request: /signup/
+WARNING:django.request:Bad Request: /signup/
+WARNING:django.request:Unauthorized: /isauthenticated/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Not Found: /reset/invalid-token/
+WARNING:django.request:Bad Request: /reset/
+WARNING:django.request:Bad Request: /signup/
+WARNING:django.request:Bad Request: /signup/
+WARNING:django.request:Bad Request: /signup/
+WARNING:django.request:Unauthorized: /isauthenticated/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Not Found: /reset/invalid-token/
+WARNING:django.request:Bad Request: /reset/
+WARNING:django.request:Bad Request: /signup/
+WARNING:django.request:Bad Request: /signup/
+WARNING:django.request:Bad Request: /signup/
+WARNING:django.request:Unauthorized: /isauthenticated/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Bad Request: /login/
+WARNING:django.request:Not Found: /reset/invalid-token/
+WARNING:django.request:Bad Request: /reset/
+WARNING:django.request:Bad Request: /signup/
+WARNING:django.request:Bad Request: /signup/
+WARNING:django.request:Bad Request: /signup/

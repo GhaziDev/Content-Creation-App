@@ -1,5 +1,4 @@
 import re
-from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 from rest_framework.response import Response

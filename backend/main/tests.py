@@ -1,13 +1,8 @@
 from django.test import TestCase, Client
-from django.urls import reverse
 from django.core.exceptions import ValidationError
-from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.utils import timezone
 from main import models, validators
 from PIL import Image
-import datetime
-import json
 import tempfile
 import os
 from io import BytesIO
@@ -163,7 +158,7 @@ class ArticleModelTest(TestCase):
     
     def test_article_ordering(self):
         """Test that articles are ordered by date (newest first)"""
-        article1 = models.Article.objects.create(
+        models.Article.objects.create(
             title='First Article Title Here',
             title_img=self.test_image,
             description='First article',
@@ -539,7 +534,7 @@ class UserProfileViewTest(TestCase):
     def test_update_user_profile_authenticated(self):
         """Test updating user profile when authenticated"""
         self.client.login(email='test@example.com', password='TestPass123!')
-        response = self.client.put('/userprofile/testuser/', {
+        self.client.put('/userprofile/testuser/', {
             'user': 'testuser',
             'bio': 'Updated bio'
         }, content_type='application/json')

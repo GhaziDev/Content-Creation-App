@@ -1,18 +1,17 @@
-from rest_framework import serializers,fields
+from rest_framework import serializers
 from main import models
-from drf_extra_fields.fields import Base64ImageField
-from PIL import Image
-from io import BytesIO
-import base64
 
 
 
 class ArticleSerializer(serializers.ModelSerializer):
     _id = serializers.UUIDField(read_only=True)
     user_profile = serializers.ReadOnlyField(source='user_profile.img.url')
+    tag = serializers.SlugRelatedField(queryset=models.Tag.objects.all(), slug_field='name')
+
     class Meta:
-        fields = '_id','title','title_img','description','tag','user','date','user_profile'
+        fields = '_id', 'title', 'title_img', 'description', 'tag', 'user', 'date', 'user_profile'
         model = models.Article
+        read_only_fields = ('user',)
 
 
 class TagSerializer(serializers.ModelSerializer):

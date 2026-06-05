@@ -1,10 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
 import uuid
 from ckeditor.fields import RichTextField
-from main import validators
-from django.conf import settings
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,AbstractUser,UserManager
+from django.contrib.auth.models import AbstractUser
 
 
 
@@ -15,6 +12,9 @@ class CustomUser(AbstractUser):
     token = models.UUIDField(default=uuid.uuid1,unique=True)
     USERNAME_FIELD ='email'
     REQUIRED_FIELDS = ['username']
+
+    def __str__(self):
+        return self.username
 
 
 class Tag(models.Model):
@@ -42,7 +42,7 @@ class Article(models.Model):
     description = RichTextField()
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE, related_name='user_articles',to_field='username')
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE,related_name='tag_articles',to_field='name')
-    date = models.DateField(auto_now_add=True,blank=False)
+    date = models.DateTimeField(auto_now_add=True,blank=False)
     user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE,to_field='user',related_name='user_posts',default=user)
 
 
@@ -70,11 +70,9 @@ class Comment(models.Model):
     date = models.DateField(auto_now_add=True)
     is_author = models.BooleanField(default=False)
 
-    class Meta:
-        ordering = '-date',
-
     def __str__(self):
         return f"{self.desc} {self.user} {self.article} {self.user.user_profile.img.url}"
+
     class Meta:
         ordering = ('-date',)
         

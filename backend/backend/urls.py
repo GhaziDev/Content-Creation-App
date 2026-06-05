@@ -19,9 +19,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework.routers import SimpleRouter
 from main import views
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 # from django.contrib.auth.views import PasswordChangeView
-from django_email_verification import urls as email_urls
 
 
 router = SimpleRouter()
