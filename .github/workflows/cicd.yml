@@ -25,8 +25,8 @@ jobs:
         
 
       # Step 3: Install project dependencies
-      - name: pip install -r requirements.txt
-        run: npm ci
+      - name: Install Dependencies
+        run: python -m pip install -r requirements.txt
 
       # Step 4: Run Linters or Format Checkers
       - name: Run Code Linter
