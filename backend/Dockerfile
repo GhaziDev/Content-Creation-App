@@ -7,6 +7,7 @@ RUN python -m pip install -r requirements.txt
 
 
 FROM base AS server
+
 WORKDIR /backend
 COPY . .
 EXPOSE 7000
