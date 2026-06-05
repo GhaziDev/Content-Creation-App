@@ -13,27 +13,50 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       # Step 1: Fetch source code from repository
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      # Step 2: Set up runtime environment 
-      - uses: actions/setup-python@v6
+      # Step 2: Set up runtime environment
+      - name: Set Up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.13' 
-        
+          python-version: '3.13'
 
       # Step 3: Install project dependencies
       - name: Install Dependencies
-        run: python -m pip install -r requirements.txt
+        run: python -m pip install -r ./backend/requirements.txt
 
       # Step 4: Run Linters or Format Checkers
       - name: Run Code Linter
-        run: ruff check
+        run: cd ./backend && ruff check
 
       # Step 5: Execute unit and integration tests
       - name: Execute Automated Tests
+        working-directory: ./backend
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DB_NAME: testdb
+          DB_USERNAME: postgres
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: localhost
+          DB_PORT: 5432
         run: python manage.py test
 
 
